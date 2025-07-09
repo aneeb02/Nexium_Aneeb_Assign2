@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import * as cheerio from 'cheerio'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -9,12 +10,48 @@ export async function GET(req: Request) {
   }
 
   try {
-    const res = await fetch(url)
+    // fetch raw HTML
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })
     const html = await res.text()
 
-    // Strip HTML tags for now (naive, we'll improve it later)
-    const text = html.replace(/<[^>]+>/g, ' ')
-    return NextResponse.json({ content: text.slice(0, 3000) }) // Limiting length for safety
+    // load into cheerio
+    const $ = cheerio.load(html)
+
+    /* ---------- basic extraction strategy ----------
+       1. Remove script & style tags
+       2. Grab common article containers (<article>, .post-content, etc.)
+       3. Fallback to all <p> tags joined together
+    ------------------------------------------------ */
+    $('script, style, noscript').remove()
+
+    let text = ''
+
+    // priority targets
+    const articleSelectors = [
+      'article',
+      '[itemprop="articleBody"]',
+      '.post-full-content',
+      '.entry-content',
+      '.article-content',
+      '.blog-post',
+    ]
+
+    for (const sel of articleSelectors) {
+      if ($(sel).length) {
+        text = $(sel).text()
+        break
+      }
+    }
+
+    // fallback: all <p>
+    if (!text) {
+      text = $('p').text()
+    }
+
+    // tidy whitespace & limit size
+    const clean = text.replace(/\s+/g, ' ').trim().slice(0, 100000)
+
+    return NextResponse.json({ content: clean })
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch blog' }, { status: 500 })
   }
