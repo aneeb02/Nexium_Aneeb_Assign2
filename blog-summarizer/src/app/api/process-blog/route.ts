@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import * as cheerio from 'cheerio'
+//process-blog
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -30,6 +31,7 @@ export async function GET(req: Request) {
     const articleSelectors = [
       'article',
       '[itemprop="articleBody"]',
+      '.post-content',
       '.post-full-content',
       '.entry-content',
       '.article-content',
@@ -49,7 +51,7 @@ export async function GET(req: Request) {
     }
 
     // tidy whitespace & limit size
-    const clean = text.replace(/\s+/g, ' ').trim().slice(0, 100000)
+    const clean = text.replace(/\s+/g, ' ').trim().slice(0, 10000)
 
     return NextResponse.json({ content: clean })
   } catch (error) {

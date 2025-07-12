@@ -12,12 +12,25 @@ export default function Home() {
     setContent("Fetching blog content...")
 
     try {
-      const res = await fetch(`/api/fetch-blog?url=${encodeURIComponent(url)}`)
+      const res = await fetch(`/api/process-blog?url=${encodeURIComponent(url)}`)
       const data = await res.json()
       setContent(data.content || "No content found.")
+
+        await fetch("/api/save-blog", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          link: url,
+          content: data.content
+        })
+      })
     } catch (error) {
       setContent("Failed to fetch blog content.")
     }
+
+
   }
 
   return (
