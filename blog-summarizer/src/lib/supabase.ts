@@ -9,7 +9,7 @@ function isSupabaseConfigured(): boolean {
   supabaseUrl &&
   supabaseKey &&
   !supabaseUrl.includes('placeholder')
-)
+  )
 
 }
 

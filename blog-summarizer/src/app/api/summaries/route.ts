@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   //change to deployed agent later
   try {
     //  Call local AI agent
-    const aiRes = await fetch('http://localhost:5000/api/summarize', {
+    const aiRes = await fetch('https://web-production-6be3.up.railway.app/api/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
