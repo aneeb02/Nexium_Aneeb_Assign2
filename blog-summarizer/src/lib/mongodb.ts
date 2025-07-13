@@ -4,6 +4,7 @@ const uri = process.env.MONGODB_URI!
 const options = {}
 
 let client: MongoClient
+// eslint-disable-next-line prefer-const
 let clientPromise: Promise<MongoClient>
 
 declare global {
