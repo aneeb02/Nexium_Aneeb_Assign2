@@ -27,22 +27,6 @@ export default function Home() {
   const [preview, setPreview] = useState('')
   const [title, setTitle] = useState('')
 
-  const [recentBlogs, setRecentBlogs] = useState<{ link: string; content: string }[]>([])
-
-  useEffect(() => {
-    const fetchRecent = async () => {
-      try {
-        const res = await fetch('/api/recent-blogs')
-        const data = await res.json()
-        setRecentBlogs(data)
-      } catch (err) {
-        console.error('Error loading recent blogs:', err)
-      }
-    }
-
-    fetchRecent()
-  }, [])
-
   const handleSubmit = async () => {
     setSummary('')
     setSentiment(null)
@@ -169,23 +153,7 @@ export default function Home() {
         </Card>
 
 
-        <Card className="bg-white">
-        <CardHeader>
-          <CardTitle>🕓 Recent Searches</CardTitle>
-          <CardDescription>Latest URLs submitted</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
-            {recentBlogs.map((blog, idx) => (
-              <li key={idx} className="truncate">
-                <a href={blog.link} target="_blank" className="text-blue-600 underline">
-                  {blog.link}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+       
       </div>
         
 
