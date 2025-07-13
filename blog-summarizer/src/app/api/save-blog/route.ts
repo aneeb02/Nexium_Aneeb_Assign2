@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     if (!link || !content) {
       return NextResponse.json({ error: 'Missing data' }, { status: 400 })
     }
+    //fixed
 
     await client.connect()
     const db = client.db('blog-summarizer')
