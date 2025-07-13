@@ -1,27 +1,29 @@
-import { NextResponse } from 'next/server'
-import clientPromise from '@/lib/mongodb'
+// /app/api/save-blog/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { MongoClient } from 'mongodb'
 
-export async function POST(req: Request) {
-  const { link, content } = await req.json()
+const uri = process.env.MONGODB_URI as string
+const client = new MongoClient(uri)
 
-  if (!link || !content) {
-    return NextResponse.json({ error: "Missing link or content" }, { status: 400 })
-  }
-
+export async function POST(req: NextRequest) {
   try {
-    const client = await clientPromise
-    const db = client.db("blog-summarizer")
-    const collection = db.collection("articles")
+    const { link, content } = await req.json()
 
-    const result = await collection.insertOne({
-      link,
-      content,
-      createdAt: new Date()
-    })
+    if (!link || !content) {
+      return NextResponse.json({ error: 'Missing data' }, { status: 400 })
+    }
+
+    await client.connect()
+    const db = client.db('blog-summarizer')
+    const collection = db.collection('articles')
+
+    const result = await collection.insertOne({ link, content, createdAt: new Date() })
 
     return NextResponse.json({ success: true, id: result.insertedId })
-  } catch (err) {
-    console.error("MongoDB error:", err)
-    return NextResponse.json({ error: "Database error" }, { status: 500 })
+  } catch (error) {
+    console.error('MongoDB Save Error:', error)
+    return NextResponse.json({ error: 'Failed to save blog' }, { status: 500 })
+  } finally {
+    await client.close()
   }
 }

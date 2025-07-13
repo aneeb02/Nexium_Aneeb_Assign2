@@ -1,49 +1,29 @@
-import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+// /app/api/summaries/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-// Check if databases are properly configured
-function isDatabaseConfigured() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  
-  return (
-    supabaseUrl && 
-    supabaseKey && 
-    !supabaseUrl.includes('placeholder') && 
-    !supabaseKey.includes('placeholder')
-  )
-}
-// a big comment added
-export async function GET() {
-  try {
-    // If database not configured, return empty array
-    if (!isDatabaseConfigured()) {
-      return NextResponse.json({ 
-        data: [],
-        demo: true,
-        message: 'Demo mode - database not configured'
-      })
-    }
-    
-    const { data, error } = await supabase
-      .from('summaries')
-      .select('*')
-      .order('created_at', { ascending: false })
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-    if (error) {
-      console.error('Supabase error:', error)
-      return NextResponse.json({ 
-        data: [],
-        error: 'Failed to fetch summaries - using demo mode'
-      })
-    }
+export async function POST(req: NextRequest) {
+  const { content, link } = await req.json()
 
-    return NextResponse.json({ data })
-  } catch (error) {
-    console.error('Error fetching summaries:', error)
-    return NextResponse.json({ 
-      data: [],
-      error: 'Failed to fetch summaries - using demo mode'
-    })
+  if (!content || !link) {
+    return NextResponse.json({ error: 'Missing content or link' }, { status: 400 })
   }
+
+  const summary = content.slice(0, 150) + '...'
+
+  const { data, error } = await supabase
+    .from('summaries')
+    .insert([{ link, summary }])
+
+  if (error) {
+    console.error('Supabase Save Error:', error)
+    return NextResponse.json({ error: 'Failed to save summary' }, { status: 500 })
+  }
+
+  return NextResponse.json({ success: true, summary })
 }
