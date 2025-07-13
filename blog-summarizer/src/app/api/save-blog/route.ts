@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     const result = await collection.insertOne({ link, title, content, createdAt: new Date() })
 
     return NextResponse.json({ success: true, id: result.insertedId })
-  } catch (error) {
-    console.error('MongoDB Save Error:', error)
+  } catch  {
+    console.error('MongoDB Save Error:')
     return NextResponse.json({ error: 'Failed to save blog' }, { status: 500 })
   } finally {
     await client.close()

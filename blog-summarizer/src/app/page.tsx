@@ -37,7 +37,6 @@ export default function Home() {
     setPreview('')
     let blogTitle = ''
 
-
     try {
       let finalText = customText
       let source = 'manual-entry'
@@ -49,7 +48,6 @@ export default function Home() {
         setPreview(finalText.slice(0, 200))
         source = url
         blogTitle = data.title || 'Untitled'
-
 
         await fetch('/api/save-blog', {
           method: 'POST',
@@ -73,9 +71,8 @@ export default function Home() {
       const summaryData = await summaryRes.json()
       setSummary(summaryData.summary || '')
       setSentiment(summaryData.sentiment_analysis || null)
-    } catch (err) {
-      console.error(err)
-      setContent('Something went wrong.')
+    } catch  {
+        setContent('Something went wrong.')
     }
   }
 
