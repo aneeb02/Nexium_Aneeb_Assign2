@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   if (!content || !link) {
     return NextResponse.json({ error: 'Missing content or link' }, { status: 400 })
   }
-
+  //change to deployed agent later
   try {
     //  Call local AI agent
     const aiRes = await fetch('http://localhost:5000/api/summarize', {
