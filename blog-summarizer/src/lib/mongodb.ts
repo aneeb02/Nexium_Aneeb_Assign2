@@ -1,7 +1,9 @@
 import { MongoClient } from 'mongodb'
 
-const uri = process.env.MONGODB_URI!
+const uri = process.env.MONGODB_URI! as string
 const options = {}
+
+
 
 let client: MongoClient
 // eslint-disable-next-line prefer-const
