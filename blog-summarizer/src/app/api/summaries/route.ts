@@ -33,8 +33,11 @@ export async function POST(req: NextRequest) {
     }
 
     const summary = aiData.summary
-    const sentiment = aiData.sentiment_analysis?.sentiment || 'unknown'
-
+    const sentiment = aiData.sentiment_analysis || {
+      sentiment: 'unknown',
+      emoji: '',
+      description: ''
+    }
     // 💾 Save summary + sentiment to Supabase
     const { error } = await supabase
       .from('summaries')
@@ -45,7 +48,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to save summary' }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true, summary, sentiment })
+    return NextResponse.json({
+      success: true,
+      summary,
+      sentiment: sentiment.sentiment,
+      sentiment_analysis: sentiment 
+    })  
   } catch {
     console.error('Unexpected summarization error:')
     return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 })
