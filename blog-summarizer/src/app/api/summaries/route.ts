@@ -12,9 +12,8 @@ export async function POST(req: NextRequest) {
   if (!content || !link) {
     return NextResponse.json({ error: 'Missing content or link' }, { status: 400 })
   }
-  //change to deployed agent later
+
   try {
-    //  Call local AI agent
     const aiRes = await fetch('https://web-production-6be3.up.railway.app/api/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -27,7 +26,17 @@ export async function POST(req: NextRequest) {
       })
     })
 
-    const aiData = await aiRes.json()
+    const raw = await aiRes.text()
+    let aiData
+
+    try {
+      aiData = JSON.parse(raw)
+      console.log("🧠 AI Agent response:", aiData)
+    } catch (err) {
+      console.error("❌ Failed to parse AI response:", raw)
+      return NextResponse.json({ error: 'Invalid response from AI agent' }, { status: 502 })
+    }
+
     if (!aiData.success) {
       return NextResponse.json({ error: aiData.error || 'AI summarization failed' }, { status: 500 })
     }
@@ -38,13 +47,13 @@ export async function POST(req: NextRequest) {
       emoji: '',
       description: ''
     }
-    // 💾 Save summary + sentiment to Supabase
+
     const { error } = await supabase
       .from('summaries')
       .insert([{ link, summary, sentiment }])
 
     if (error) {
-      console.error('Supabase insert error:', error)
+      console.error('❌ Supabase insert error:', error)
       return NextResponse.json({ error: 'Failed to save summary' }, { status: 500 })
     }
 
@@ -52,10 +61,11 @@ export async function POST(req: NextRequest) {
       success: true,
       summary,
       sentiment: sentiment.sentiment,
-      sentiment_analysis: sentiment 
-    })  
-  } catch {
-    console.error('Unexpected summarization error:')
+      sentiment_analysis: sentiment
+    })
+
+  } catch (err) {
+    console.error('❌ Unexpected summarization error:', err)
     return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 })
   }
 }
