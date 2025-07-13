@@ -20,11 +20,3 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholde
 export const supabase = isSupabaseConfigured() ? createClient(supabaseUrl, supabaseAnonKey) : null
 
 export { isSupabaseConfigured }
-
-export interface BlogSummary {
-  id?: string
-  url: string
-  title: string
-  summary: string
-  created_at?: string
-}

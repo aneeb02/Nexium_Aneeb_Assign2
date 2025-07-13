@@ -45,7 +45,7 @@ export default function Home() {
 
   return (
     <main className="max-w-2xl mx-auto mt-20 p-6">
-      <h1 className="text-2xl font-bold mb-4">📝 Blog Summarizer</h1>
+      <h1 className="text-2xl font-bold mb-4"> Blog Summarizer</h1>
       <Input
         placeholder="Enter blog URL"
         value={url}
@@ -55,7 +55,7 @@ export default function Home() {
       <Button onClick={fetchBlog}>Fetch Blog</Button>
 
       <div className="mt-6">
-        <h2 className="font-semibold">📌 Summary:</h2>
+        <h2 className="font-semibold"> Summary:</h2>
         <p className="mb-4">{summary}</p>
 
         <h2 className="font-semibold">📄 Full Content:</h2>
