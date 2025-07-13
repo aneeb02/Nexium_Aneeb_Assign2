@@ -26,6 +26,8 @@ export default function Home() {
     description: string
   } | null>(null)
   const [preview, setPreview] = useState('')
+  const [title, setTitle] = useState('')
+
   
 
   const handleSubmit = async () => {
@@ -33,6 +35,8 @@ export default function Home() {
     setSentiment('')
     setContent('Processing...')
     setPreview('')
+    let blogTitle = ''
+
 
     try {
       let finalText = customText
@@ -44,6 +48,8 @@ export default function Home() {
         finalText = data.content || 'No content found.'
         setPreview(finalText.slice(0, 200))
         source = url
+        blogTitle = data.title || 'Untitled'
+
 
         await fetch('/api/save-blog', {
           method: 'POST',
@@ -55,6 +61,8 @@ export default function Home() {
       }
 
       setContent(finalText)
+      setTitle(blogTitle)
+
 
       const summaryRes = await fetch('/api/summaries', {
         method: 'POST',
@@ -144,10 +152,11 @@ export default function Home() {
         {/* Preview Card */}
         <Card className='bg-yellow-100'>
           <CardHeader>
-            <CardTitle>Blog Preview</CardTitle>
+            <CardTitle>Preview of Blog</CardTitle>
             <CardDescription>First 200 characters</CardDescription>
           </CardHeader>
           <CardContent>
+            <h2 className="text-xl font-bold mt-6">{title}</h2>
             <p className="whitespace-pre-wrap text-gray-700">{preview}...</p>
           </CardContent>
         </Card>

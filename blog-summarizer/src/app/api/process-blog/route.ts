@@ -18,13 +18,25 @@ export async function GET(req: Request) {
     // load into cheerio
     const $ = cheerio.load(html)
 
-    /* ---------- basic extraction strategy ----------
-       1. Remove script & style tags
-       2. Grab common article containers (<article>, .post-content, etc.)
-       3. Fallback to all <p> tags joined together
-    ------------------------------------------------ */
-    $('script, style, noscript').remove()
+    const rawTitle = $('title').first().text() || $('h1').first().text()
+    const title = rawTitle.trim().replace(/\s*\|.*$/, '') // removes “| Blog Name”
 
+    function cleanScrapedText(text: string): string {
+      if (typeof text !== 'string') {
+          console.error("Input must be a string.");
+          return "";
+      }
+
+      // 1. Replace multiple whitespace characters (spaces, newlines, tabs) with a single space.
+      let cleanedText = text.replace(/\s+/g, ' ');
+
+      // 2. Trim leading and trailing whitespace that might have been left or introduced.
+      cleanedText = cleanedText.trim();
+
+      return cleanedText;
+    }
+
+    $('script, style, noscript').remove()
     let text = ''
 
     // priority targets
@@ -36,11 +48,14 @@ export async function GET(req: Request) {
       '.entry-content',
       '.article-content',
       '.blog-post',
+      'content',
     ]
 
-    for (const sel of articleSelectors) {
-      if ($(sel).length) {
-        text = $(sel).text()
+    let content = ''
+    for (const selector of articleSelectors) {
+      const text = $(selector).text()
+      if (text.length > 300) {
+        content = text
         break
       }
     }
@@ -51,10 +66,10 @@ export async function GET(req: Request) {
     }
 
     // tidy whitespace & limit size
-    const clean = text.replace(/\s+/g, ' ').trim().slice(0, 10000)
+    const clean = cleanScrapedText(content)
 
-    return NextResponse.json({ content: clean })
-  } catch (error) {
+    return NextResponse.json({ content: clean, title })
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch blog' }, { status: 500 })
   }
 }

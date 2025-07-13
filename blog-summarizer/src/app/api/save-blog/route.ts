@@ -7,7 +7,7 @@ const client = new MongoClient(uri)
 
 export async function POST(req: NextRequest) {
   try {
-    const { link, content } = await req.json()
+    const { link, content, title } = await req.json()
 
     if (!link || !content) {
       return NextResponse.json({ error: 'Missing data' }, { status: 400 })
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const db = client.db('blog-summarizer')
     const collection = db.collection('articles')
 
-    const result = await collection.insertOne({ link, content, createdAt: new Date() })
+    const result = await collection.insertOne({ link, title, content, createdAt: new Date() })
 
     return NextResponse.json({ success: true, id: result.insertedId })
   } catch (error) {
