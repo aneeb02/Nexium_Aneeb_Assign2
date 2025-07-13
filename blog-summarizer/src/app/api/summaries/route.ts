@@ -13,7 +13,7 @@ function isDatabaseConfigured() {
     !supabaseKey.includes('placeholder')
   )
 }
-
+// a big comment added
 export async function GET() {
   try {
     // If database not configured, return empty array
@@ -24,9 +24,9 @@ export async function GET() {
         message: 'Demo mode - database not configured'
       })
     }
-
+    
     const { data, error } = await supabase
-      .from('blog_summaries')
+      .from('summaries')
       .select('*')
       .order('created_at', { ascending: false })
 
