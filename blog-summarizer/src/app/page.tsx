@@ -1,5 +1,5 @@
 'use client'
-
+import { useEffect } from 'react'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -27,7 +27,21 @@ export default function Home() {
   const [preview, setPreview] = useState('')
   const [title, setTitle] = useState('')
 
-  
+  const [recentBlogs, setRecentBlogs] = useState<{ link: string; content: string }[]>([])
+
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        const res = await fetch('/api/recent-blogs')
+        const data = await res.json()
+        setRecentBlogs(data)
+      } catch (err) {
+        console.error('Error loading recent blogs:', err)
+      }
+    }
+
+    fetchRecent()
+  }, [])
 
   const handleSubmit = async () => {
     setSummary('')
@@ -153,7 +167,28 @@ export default function Home() {
             <p className="whitespace-pre-wrap text-gray-700">{preview}...</p>
           </CardContent>
         </Card>
-</div>
+
+
+        <Card className="bg-white">
+        <CardHeader>
+          <CardTitle>🕓 Recent Searches</CardTitle>
+          <CardDescription>Latest URLs submitted</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
+            {recentBlogs.map((blog, idx) => (
+              <li key={idx} className="truncate">
+                <a href={blog.link} target="_blank" className="text-blue-600 underline">
+                  {blog.link}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+      </div>
+        
+
       </div>
     </main>
   )
