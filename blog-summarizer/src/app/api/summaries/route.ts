@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
     try {
       aiData = JSON.parse(raw)
       console.log("🧠 AI Agent response:", aiData)
-    } catch (err) {
-      console.error("❌ Failed to parse AI response:", raw)
+    } catch (_err) {
+      console.error("❌ Failed to parse AI response:")
       return NextResponse.json({ error: 'Invalid response from AI agent' }, { status: 502 })
     }
 
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
       sentiment_analysis: sentiment
     })
 
-  } catch (err) {
-    console.error('❌ Unexpected summarization error:', err)
+  } catch (_err) {
+    console.error('❌ Unexpected summarization error:')
     return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 })
   }
 }

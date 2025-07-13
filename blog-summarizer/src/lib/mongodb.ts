@@ -6,7 +6,8 @@ const options = {}
 
 
 let client: MongoClient
-// eslint-disable-next-line prefer-const
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prefer-const */
 let clientPromise: Promise<MongoClient>
 
 declare global {
