@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const summary = aiData.summary
-    const sentiment = aiData.sentiment_analysis || {
+    const sentiment = aiData.sentiment_analysis?.sentiment || {
       sentiment: 'unknown',
       emoji: '',
       description: ''
