@@ -18,7 +18,6 @@ export default function Home() {
   const [mode, setMode] = useState<'url' | 'text'>('url')
   const [url, setUrl] = useState('')
   const [customText, setCustomText] = useState('')
-  const [content, setContent] = useState('')
   const [summary, setSummary] = useState('')
   const [sentiment, setSentiment] = useState<{
     sentiment: string
@@ -33,7 +32,6 @@ export default function Home() {
   const handleSubmit = async () => {
     setSummary('')
     setSentiment('')
-    setContent('Processing...')
     setPreview('')
     let blogTitle = ''
 
@@ -58,7 +56,6 @@ export default function Home() {
         setPreview(customText.slice(0, 200))
       }
 
-      setContent(finalText)
       setTitle(blogTitle)
 
 
@@ -72,7 +69,6 @@ export default function Home() {
       setSummary(summaryData.summary || '')
       setSentiment(summaryData.sentiment_analysis || null)
     } catch  {
-        setContent('Something went wrong.')
     }
   }
 
