@@ -31,7 +31,7 @@ export default function Home() {
 
   const handleSubmit = async () => {
     setSummary('')
-    setSentiment('')
+    setSentiment(null)
     setPreview('')
     let blogTitle = ''
 
